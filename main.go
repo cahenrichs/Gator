@@ -6,6 +6,10 @@ import (
 "fmt"
 )
 
+type State struct {
+	cfg *config.Config
+}
+
 func main() {
 	cfg, err := config.Read()
 	if err != nil {
