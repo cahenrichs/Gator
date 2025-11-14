@@ -5,9 +5,11 @@ import (
 "log"
 "fmt"
 "os"
+_ "github.com/lib/pq"
 )
 
 type State struct {
+	db *database.Queries
 	cfg *config.Config
 }
 
@@ -15,6 +17,11 @@ func main() {
 	cfg, err := config.Read()
 	if err != nil {
 		log.Fatalf("error reading config: %v", err)
+	}
+
+	db, err := sql.Open("postgres", cfg.DBURL)
+	if err != nil {
+		log.Fatalf("error connecting to db: %v", err)
 	}
 
 
