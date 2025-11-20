@@ -39,7 +39,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("error reading config: %v", err)
 	}
-	fmt.Printf("%+v\n", cfg)
+	// fmt.Printf("%+v\n", cfg)
 
 	// s = &State{cfg: &cfg}
 
@@ -53,6 +53,7 @@ func main() {
 	cmds.register("users", handlerListUsers)
 	cmds.register("agg", handlerAgg)
 	cmds.register("addfeed", handlerAddFeed)
+	cmds.register("feeds", handlerListFeeds)
 	if len(os.Args) < 2 {
 		fmt.Println("error: not enough arguments")
 		os.Exit(1)
