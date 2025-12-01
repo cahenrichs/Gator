@@ -55,6 +55,7 @@ func main() {
 	cmds.register("addfeed", handlerAddFeed)
 	cmds.register("feeds", handlerListFeeds)
 	cmds.register("follow", handlerFollow)
+	cmds.register("following", handlerListFeedFollows)
 	if len(os.Args) < 2 {
 		fmt.Println("error: not enough arguments")
 		os.Exit(1)
@@ -72,4 +73,13 @@ func main() {
 		// os.Exit(1)
 	// }
 
+}
+func middlewareLoggedIn(handler func(s *State, cmd command, user database.User) error) func(*State, command) error {
+	return func(s *State, cmd command) error {
+		user, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
+		if err != nil {
+			return err
+		}
+		return handler(s, cmd, user)
+	}
 }
