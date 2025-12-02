@@ -8,7 +8,7 @@ import (
 "github.com/google/uuid"
 )
 
-func handlerFollow (s *State, cmd command) error {
+func handlerFollow(s *State, cmd command, user database.User) error {
 	user, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
 	if err != nil {
 		return err
@@ -36,7 +36,7 @@ func handlerFollow (s *State, cmd command) error {
 	return nil
 }
 
-func handlerListFeedFollows(s *State, cmd command) error {
+func handlerListFeedFollows(s *State, cmd command, user database.User) error {
 	user, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
 	if err != nil {
 		return err
