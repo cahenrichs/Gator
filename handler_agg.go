@@ -3,14 +3,54 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
+	"github.com/cahenrichs/Gator/internal/database"
 )
 
 func handlerAgg(s *State, cmd command) error {
-	ctx := context.Background()
-	res, err := fetchFeed(ctx, "https://www.wagslane.dev/index.xml")
-	if err != nil {
-		return err
+	if len(cmd.Args) < 1 || len(cmd.Args) > 2 {
+		return fmt.Errorf("usage: %s <time_between_reqs>", cmd.Name)
 	}
-	fmt.Println(res)
-	return nil
+
+	timeBetweenRequests, err := time.ParseDuration(cmd.Args[0])
+	if err != nil {
+		return fmt.Errorf("invalid duration: %w", err)
+	}
+
+	log.Printf("Collecting feeds every %s...", timeBetweenRequests)
+
+	ticker := time.NewTicker(timeBetweenRequests)
+
+	for ; ; <-ticker.C {
+		scrapeFeeds(s)
+	}
+}
+
+func scrapeFeeds(s *State) {
+	feed, err := s.db.GetNextFeedToFetch(context.Background())
+	if err != nil {
+		log.Println("Couldn't mark feed %s fetched: %v", feed.Name, err)
+		return
+	}
+	log.Println("Found a feed to fetch!")
+	scrapeFeed(s.db, feed)
+
+}
+
+func scrapeFeed(db *database.Queries, feed database.Feed) {
+	_, err := db.MarkFeedFetched(context.Background(), feed.ID)
+	if err != nil {
+		log.Printf("Couldn't mark the feed %s fetched: %w", feed.Name, err)
+	}
+
+	feedData, err := fetchFeed(context.Background(), feed.Url) 
+	if err != nil {
+		log.Printf("Couldn't collect feed %s: %v", feed.Name, err)
+	}
+
+	for _, item := range feedData.Channel.Item {
+		fmt.Printf("Found post: %s\n", item.Title)
+	}
+	log.Printf("Feed %s collected, %v posts found", feed.Name, len(feedData.Channel.Item))
 }

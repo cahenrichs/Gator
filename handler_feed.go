@@ -19,8 +19,8 @@ func handlerAddFeed(s *State, cmd command, user database.User) error {
 		return fmt.Errorf("usage: %s <name> <url>", cmd.Name)
 	}
 	
-	name := cmd.Args[0]
-	url := cmd.Args[1]
+	url := cmd.Args[0]
+	name := cmd.Args[1]
 	
 	feed, err := s.db.CreateFeed(context.Background(), database.CreateFeedParams{
 		ID:			uuid.New(),
