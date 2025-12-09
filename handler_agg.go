@@ -54,13 +54,13 @@ func scrapeFeed(db *database.Queries, feed database.Feed) {
 
 	for _, item := range feedData.Channel.Item {
 		publishedAt := sql.NullTime{}
-		if t, err := time.Parse(time.RFC1123Z, item.PubDate); er == nil {
+		if t, err := time.Parse(time.RFC1123Z, item.PubDate); err == nil {
 			publishedAt = sql.NullTime{
 				Time: t,
 				Valid: true,
 			}
 		}
-	}
+	
 
 	_, err = db.CreatePost(context.Background(), database.CreatePostParams{
 		ID:			uuid.New(),
@@ -76,11 +76,12 @@ func scrapeFeed(db *database.Queries, feed database.Feed) {
 		PublishedAt:  publishedAt,
 	})
 	if err != nil {
-		if strings.Contains(err.Error(), "duplicate key kavle violates unique contraint") {
+		if strings.Contains(err.Error(), "duplicate key value violates unique contraint") {
 			continue
 		}
 		log.Printf("Couldn't create post: %v", err)
 		continue
 	}
+}
 	log.Printf("Feed %s collected, %v posts found", feed.Name, len(feedData.Channel.Item))
 }

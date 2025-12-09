@@ -1,7 +1,10 @@
 package main
 
 import (
-
+"context"
+"fmt"
+"strconv"
+"github.com/cahenrichs/Gator/internal/database"
 )
 
 func handlerBrowse(s *State, cmd command, user database.User) error {
@@ -15,8 +18,8 @@ func handlerBrowse(s *State, cmd command, user database.User) error {
 	}
 
 	posts, err := s.db.GetPostsForUser(context.Background(), database.GetPostsForUserParams{
-		UserID: user.ID
-		Limit:  int32(limit)
+		UserID: user.ID,
+		Limit:  int32(limit),
 	})
 	if err != nil {
 		return fmt.Errorf("couldn't get posts for user: %w", err)

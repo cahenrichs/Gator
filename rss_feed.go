@@ -21,7 +21,7 @@ type RSSItem struct {
 	Title		string		`xml:"title"`
 	Link		string		`xml:"link"`
 	Description	string		`xml:"description"`
-	PubSate		string		`xml:"pubDate"`
+	PubDate		string		`xml:"pubDate"`
 }
 
 func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
